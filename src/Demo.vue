@@ -1,20 +1,20 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+    <h1>Flexi Grid</h1>
+    <FlexiGrid title="Flexi Grid Saves The World" msg="Here Goes our complicated code" />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import HelloWorld from './components/HelloWorld.vue';
+import { Component, Vue } from "vue-property-decorator";
+import FlexiGrid from "./components/FlexiGrid.vue";
 
 @Component({
   components: {
-    HelloWorld,
-  },
+    FlexiGrid
+  }
 })
-export default class App extends Vue {}
+export default class Demo extends Vue {}
 </script>
 
 <style lang="scss">
