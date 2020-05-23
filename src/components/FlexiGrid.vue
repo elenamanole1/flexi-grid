@@ -3,8 +3,14 @@
     <table class="fx-grid">
       <thead>
         <tr>
+          <th>#</th>
           <th v-for="col in colList" :key="col.id">
-            <p>{{col.title}}</p>
+            <p>{{col.title}} 
+              <span class="fx-grid-sort-header" @click="sortColumn(col.id)">
+                <span v-if="col.sortingOrder === 'asc' || col.sortingOrder === 'none'">&#10224;</span>
+                <span v-if="col.sortingOrder === 'des' || col.sortingOrder === 'none'">&#10225;</span>
+              </span>
+              </p>
             <p>
               <input v-if="col.filter" type="text" placeholder="Search" @keyup="filterData($event, col.id)"/>
             </p>
@@ -12,7 +18,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="row in getPage">
+        <tr v-for="(row, i) in getPage">
+          <td>{{((index - 1) * selectedPageSize) + i + 1}}</td>
           <td v-for="col in colList" :key="col.id">{{row[col.id] ? row[col.id] : "--"}}</td>
         </tr>
       </tbody>
@@ -68,10 +75,10 @@ export default {
     this.selectedPageSize = this.pageSize;
     
     // no initial filter
-    this.rowList = this.rows;
-    this.filteredRows = this.rows;  
-    this.colList = this.cols;
+    this.rowList = JSON.parse(JSON.stringify(this.rows));
+    this.filteredRows = JSON.parse(JSON.stringify(this.rows));  
 
+    this.createSortingOrder();
     this.updateNumberOfPages();
   },
   
@@ -111,7 +118,7 @@ export default {
         } else {
           this.filters.push({colId, text});
         }
-        this.filteredRows = this.rowList;
+        this.filteredRows = JSON.parse(JSON.stringify(this.rowList));;
 
         this.filters.forEach(el => {
           that.filteredRows = that.filteredRows.filter(row => {
@@ -129,10 +136,60 @@ export default {
       } else {
         this.numberOfPages = this.filteredRows.length / this.selectedPageSize;
       }
+    },
+
+    createSortingOrder() {
+      const that = this;
+      this.cols.forEach(col => {
+        col["sortingOrder"] = "none";
+        that.colList.push(col);
+      });
+    },
+
+    sortColumn(key) {
+      const col = this.colList.find(el => el.id === key);
+      if (col.sortingOrder) {
+        switch (col.sortingOrder) {
+          case "none":
+            col.sortingOrder = "asc";
+            break;
+          case "asc":
+            col.sortingOrder = "des";
+            break;
+          case "des":
+            col.sortingOrder = "none";
+            break;
+          default:
+            break;
+        }
+        this.sortList(key);
+      }
+    },
+
+    sortList(key) {
+      const col = this.colList.find(el => el.id === key);
+      const order = col.sortingOrder === "asc" ? 1 : -1;
+      if (col.sortingOrder !== "none") {
+        this.filteredRows.sort((a, b) => {
+          const e1 = a[key];
+          const e2 = b[key];
+          if (e1 === e2) {
+            return 0;
+          }
+          return e1 > e2 ? 1 * order : -1 * order;
+        });
+      } else {
+        this.filteredRows = JSON.parse(JSON.stringify(this.rowList));
+      }
     }
   }
 };
 </script>
 
 <style scoped lang="scss">
+  .fx-grid {
+    & .fx-grid-sort-header {
+      cursor: pointer;
+    }
+  }
 </style>
