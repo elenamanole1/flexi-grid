@@ -3,34 +3,36 @@
     <table class="fx-grid">
       <thead>
         <tr>
-          <th>#</th>
-          <th v-for="col in colList" :key="col.id">
-            <p>{{col.title}} 
-              <span class="fx-grid-sort-header" @click="sortColumn(col.id)">
-                <span v-if="col.sortingOrder === 'asc' || col.sortingOrder === 'none'">&#10224;</span>
-                <span v-if="col.sortingOrder === 'des' || col.sortingOrder === 'none'">&#10225;</span>
+          <th class="fx-grid-col__header fx-grid-col__header-count">#</th>
+          <th class="fx-grid-col__header" v-for="col in colList" :key="col.id">
+            <p class="fx-grid-col__header-title">
+              {{col.title}} 
+              <span class="fx-grid-col__header-sort" @click="sortColumn(col.id)">
+                <span class="fx-grid-col__header-sort-asc" :class="{grey: col.sortingOrder === 'asc'}">&#8639;</span>
+                <span class="fx-grid-col__header-sort-des" :class="{grey: col.sortingOrder === 'des'}">&#8642;</span>
               </span>
-              </p>
-            <p>
-              <input v-if="col.filter" type="text" placeholder="Search" @keyup="filterData($event, col.id)"/>
             </p>
+            <p class="fx-grid-col__header-filter"><input v-if="col.filter" type="text" placeholder="Search" @keyup="filterData($event, col.id)"/></p>
           </th>
         </tr>
       </thead>
-      <tbody>
-        <tr v-for="(row, i) in getPage">
-          <td>{{((index - 1) * selectedPageSize) + i + 1}}</td>
-          <td v-for="col in colList" :key="col.id">{{row[col.id] ? row[col.id] : "--"}}</td>
+      <tbody class="fx-grid-body">
+        <tr class="fx-grid-row" v-for="(row, i) in getPage">
+          <td class="fx-grid-cell__count">{{((index - 1) * selectedPageSize) + i + 1}}</td>
+          <td class="fx-grid-cell" v-for="col in colList" :key="col.id">{{row[col.id] ? row[col.id] : "--"}}</td>
         </tr>
-      </tbody>
-      <tfoot v-if="pagination && numberOfPages > 1">
-        <button :disabled="index === 1" @click="changePage(0)">&lt;&lt;</button>
-        <button :disabled="index === 1" @click="changePage(-1)">&lt;</button>
+        <tr v-if="pagination && numberOfPages > 1">
+          <td class="fx-grid-footer" align="right" :colspan="colList.length + 1">
+            <button class="fx-grid-footer__button-first-page" :disabled="index === 1" @click="changePage(0)">&lt;&lt;</button>
+            <button class="fx-grid-footer__button-previous-page" :disabled="index === 1" @click="changePage(-1)">&lt;</button>
 
-        <button :disabled="index === numberOfPages" @click="changePage(1)">&gt;</button>
-        <button :disabled="index === numberOfPages" @click="changePage(numberOfPages)">&gt;&gt;</button>
-        <span>{{index}}/{{numberOfPages}}</span>
-      </tfoot>
+            <span class="fx-grid-footer__page-indicator" > {{index}}/{{numberOfPages}} </span>
+
+            <button class="fx-grid-footer__button-next-page" :disabled="index === numberOfPages" @click="changePage(1)">&gt;</button>
+            <button class="fx-grid-footer__button-last-page" :disabled="index === numberOfPages" @click="changePage(numberOfPages)">&gt;&gt;</button>
+          </td>
+      </tr>
+      </tbody>
     </table>
   </div>
 </template>
@@ -118,13 +120,16 @@ export default {
         } else {
           this.filters.push({colId, text});
         }
-        this.filteredRows = JSON.parse(JSON.stringify(this.rowList));;
+        this.filteredRows = JSON.parse(JSON.stringify(this.rowList));
 
         this.filters.forEach(el => {
           that.filteredRows = that.filteredRows.filter(row => {
             return row[el.colId] && (el.text === "" || row[el.colId].includes(el.text));
           });
         });
+
+        // Reset index
+        this.index = 1;
         this.updateNumberOfPages();
       }  
     },
@@ -157,7 +162,7 @@ export default {
             col.sortingOrder = "des";
             break;
           case "des":
-            col.sortingOrder = "none";
+            col.sortingOrder = "asc";
             break;
           default:
             break;
@@ -188,8 +193,69 @@ export default {
 
 <style scoped lang="scss">
   .fx-grid {
-    & .fx-grid-sort-header {
-      cursor: pointer;
+    width: 100%;
+    border-spacing: 0;
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+
+    & .fx-grid-col__header {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      text-align: left;
+      border-bottom: 1px solid black;
+      border-right: 1px solid black;
+      padding-right: 10px;
+      padding-left: 10px;
+
+      & .fx-grid-col__header-title {
+        margin-bottom: 0;
+      }
+
+      & .fx-grid-col__header-filter {
+        margin-top: 0;
+      }
+
+      &.fx-grid-col__header-count {
+        min-width: auto;
+        max-width: auto;
+        text-align: center;
+      }
+
+      & .fx-grid-col__header-sort {
+        cursor: pointer;
+        & .fx-grid-col__header-sort-asc,
+        & .fx-grid-col__header-sort-des {
+          &.grey {
+            color: grey;
+          }
+        }
+      }
+    }
+
+    & .fx-grid-body {
+      & .fx-grid-cell,
+      & .fx-grid-cell__count {
+        height: 30px;
+        padding-left: 5px;
+        padding-right: 5px;
+        border-bottom: 1px solid black;
+        border-right: 1px solid black;
+      }
+
+      & .fx-grid-cell__count {
+        text-align: center;
+      }
+    }
+
+    & .fx-grid-footer {
+        height: 50px;
+        border-right: 1px solid black;
+        padding-right: 50px;
     }
   }
 </style>
