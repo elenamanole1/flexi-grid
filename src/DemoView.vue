@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <h1 class="title">Flexible Grid</h1>
-    <FlexiGrid class="grid" :cols="cols" :rows="rows" />
+    <FlexiGrid class="grid" :cols="cols" :rows="rows" :pagination="pagination" :page-size="pageSize"/>
   </div>
 </template>
 <script>
@@ -48,10 +48,10 @@ export default {
     ],
     rows: [],
     pagination: true,
-    pageSize: 20
+    pageSize: 21
   }),
   created() {
-    this.rows = this.loadMockData(100);
+    this.rows = this.loadMockData(200);
   },
   methods: {
     loadMockData(nrOfRows) {
