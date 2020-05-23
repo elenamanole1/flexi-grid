@@ -1,34 +1,38 @@
 <template>
-  <div class="flexi-grid">
-    <h3 v-if="title">{{title}}</h3>
-    <p>{{ msg }}</p>
+  <div>
+    <table class="fx-grid">
+      <thead>
+        <tr>
+          <th v-for="col in cols" :key="col.id">
+            {{col.title}}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="row in rows">
+          <td v-for="col in cols" :key="col.id">{{row[col.id] ? row[col.id] : "--"}}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-
-@Component
-export default class FlexiGrid extends Vue {
-  @Prop() private title!: string;
-  @Prop() private msg!: string;
-}
+<script>
+export default {
+  props: {
+    cols: { type: Array, required: true },
+    rows: { type: Array, required: true },
+    pagination: { type: Boolean, default: false },
+    pageSize: { type: Number, default: 10 }
+  },
+  data: () => ({
+    pageNumber: 0,
+  }),
+  computed: {},
+  created() {},
+  methods: {}
+};
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
 </style>

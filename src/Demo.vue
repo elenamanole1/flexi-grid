@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <h1>Flexi Grid</h1>
-    <FlexiGrid title="Flexi Grid Saves The World" msg="Here Goes our complicated code" />
+    <FlexiGrid title="Ananas" msg="Here Goes our complicated code" />
   </div>
 </template>
 
