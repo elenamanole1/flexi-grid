@@ -1,43 +1,50 @@
 <template>
-  <div>
-    <table class="fx-grid">
-      <thead>
-        <tr>
-          <th class="fx-grid-col__header fx-grid-col__header-count">#</th>
-          <th class="fx-grid-col__header" v-for="col in colList" :key="col.id">
-            <p class="fx-grid-col__header-title">
-              {{col.title}} 
-              <span class="fx-grid-col__header-sort" @click="sortColumn(col.id)">
+  <table class="table table-striped table-hover fx-grid">
+    <thead class="thead-light">
+      <tr scope="row">
+        <th scope="col" class="fx-grid-col__header fx-grid-col__header-count">#</th>
+        <th scope="col" class="fx-grid-col__header" v-for="col in colList" :key="col.id">
+          <div>
+            <div class="fx-grid-col__header-title">
+              <span v-if="col.sort" class="fx-grid-col__header-sort" @click="sortColumn(col.id)">
                 <span class="fx-grid-col__header-sort-asc" :class="{grey: col.sortingOrder === 'asc'}">&#8639;</span>
                 <span class="fx-grid-col__header-sort-des" :class="{grey: col.sortingOrder === 'des'}">&#8642;</span>
               </span>
-            </p>
-            <p class="fx-grid-col__header-filter"><input v-if="col.filter" type="text" placeholder="Search" @keyup="filterData($event, col.id)"/></p>
-          </th>
-        </tr>
-      </thead>
-      <tbody class="fx-grid-body">
-        <tr class="fx-grid-row" v-for="(row, i) in getPage">
-          <td class="fx-grid-cell__count">{{((index - 1) * selectedPageSize) + i + 1}}</td>
-          <td class="fx-grid-cell" v-for="col in colList" :key="col.id">{{row[col.id] ? row[col.id] : "--"}}</td>
-        </tr>
-        <tr v-if="pagination && numberOfPages > 1">
-          <td class="fx-grid-footer" align="right" :colspan="colList.length + 1">
-            <button class="fx-grid-footer__button-first-page" :disabled="index === 1" @click="changePage(0)">&lt;&lt;</button>
-            <button class="fx-grid-footer__button-previous-page" :disabled="index === 1" @click="changePage(-1)">&lt;</button>
-
-            <span class="fx-grid-footer__page-indicator" > {{index}}/{{numberOfPages}} </span>
-
-            <button class="fx-grid-footer__button-next-page" :disabled="index === numberOfPages" @click="changePage(1)">&gt;</button>
-            <button class="fx-grid-footer__button-last-page" :disabled="index === numberOfPages" @click="changePage(numberOfPages)">&gt;&gt;</button>
-          </td>
+              <span v-else>‎‎‏‏‎</span>
+              {{col.title}} 
+            </div>
+            <div v-if="col.filter" class="input-group input-group-sm mb-3 fx-grid-col__header-filter">
+              <input type="text" class="form-control" aria-label="Small" placeholder="Search" @keyup="filterData($event, col.id)">
+            </div>
+          </div>
+        </th>
       </tr>
-      </tbody>
-    </table>
-  </div>
+    </thead>
+    <tbody class="fx-grid-body">
+      <tr scope="row" class="fx-grid-row" v-for="(row, i) in getPage">
+        <td scope="col" class="fx-grid-cell__count">{{((index - 1) * selectedPageSize) + i + 1}}</td>
+        <td scope="col" class="fx-grid-cell" v-for="col in colList" :key="col.id">{{row[col.id] ? row[col.id] : "--"}}</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr scope="row" v-if="pagination && numberOfPages > 1">
+        <td scope="col" class="fx-grid-footer" align="right" :colspan="colList.length + 1">
+          <button class="btn btn-outline-primary btn-sm fx-grid-footer__button-first-page" :disabled="index === 1" @click="changePage(0)">&lt;&lt;</button>
+          <button class="btn btn-outline-primary btn-sm fx-grid-footer__button-previous-page" :disabled="index === 1" @click="changePage(-1)">&lt;</button>
+
+          <span class="fx-grid-footer__page-indicator" > {{index}}/{{numberOfPages}} </span>
+
+          <button class="btn btn-outline-primary btn-sm fx-grid-footer__button-next-page" :disabled="index === numberOfPages" @click="changePage(1)">&gt;</button>
+          <button class="btn btn-outline-primary btn-sm fx-grid-footer__button-last-page" :disabled="index === numberOfPages" @click="changePage(numberOfPages)">&gt;&gt;</button>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
 </template>
 
 <script>
+import style from "./../assets/css/bootstrap.min.css"
+
 export default {
   props: {
     cols: { type: Array, required: true },
@@ -50,16 +57,18 @@ export default {
     index: 1,
     numberOfPages: 1,
     selectedPageSize: 10,
-    filteredRows: [],
     rowList: [],
     colList: [],
-    filters: []
+    filters: [],
+    filteredRows: [],
   }),
 
   watch: {},
 
   computed: {
-    // get the items from the current page
+    /**
+     * Get the rows for the current page
+     */
     getPage() {
       if (this.pagination) {
         const start = (this.index - 1) * this.selectedPageSize;
@@ -76,7 +85,7 @@ export default {
   created() {
     this.selectedPageSize = this.pageSize;
     
-    // no initial filter
+    // Make a deep copy of rows
     this.rowList = JSON.parse(JSON.stringify(this.rows));
     this.filteredRows = JSON.parse(JSON.stringify(this.rows));  
 
@@ -85,6 +94,36 @@ export default {
   },
   
   methods: {
+    /**
+     * Called the first time when the component is initialized. Sets up the sorting order for every column
+     */
+    createSortingOrder() {
+      const that = this;
+      this.cols.forEach(col => {
+        col["sortingOrder"] = "none";
+        that.colList.push(col);
+      });
+    },
+    
+    /**
+     * Called everytime we need to recalculate the number of pages.
+     */
+    updateNumberOfPages() {
+      if (this.filteredRows.length % this.selectedPageSize !== 0) {
+        this.numberOfPages = parseInt(this.filteredRows.length / this.selectedPageSize + 1, 10);
+      } else {
+        this.numberOfPages = this.filteredRows.length / this.selectedPageSize;
+      }
+    },
+
+    /**
+     * Called when we change the page (by clicking one of the four buttons)
+     * @param pageOffset: -1/0/1/numberOfPages 
+     * 0             -> go to the first page
+     * -1            -> go a page back if available
+     * 1             -> go a page forword if available
+     * numberOfPages -> go to the last page
+     */
     changePage(pageOffset) {
       switch (pageOffset) {
         case 0:
@@ -108,8 +147,13 @@ export default {
       }
     },
 
+
+    /**
+     * Called ok keyup in the filter inputs
+     * @param $event: if $event.which === 13(ENTER) we apply the filters
+     * @param colId: the id of the column we want to filter by
+     */
     filterData($event, colId) {
-      // filter on enter
       if ($event.which === 13) {
         const that = this;
         const text = $event.target.value;
@@ -128,64 +172,40 @@ export default {
           });
         });
 
-        // Reset index
+        // Reset index to avoid getting stuck on another page
         this.index = 1;
         this.updateNumberOfPages();
       }  
     },
 
-    updateNumberOfPages() {
-      // determine the number of required pages
-      if (this.filteredRows.length % this.selectedPageSize !== 0) {
-        this.numberOfPages = parseInt(this.filteredRows.length / this.selectedPageSize + 1, 10);
-      } else {
-        this.numberOfPages = this.filteredRows.length / this.selectedPageSize;
-      }
-    },
-
-    createSortingOrder() {
-      const that = this;
-      this.cols.forEach(col => {
-        col["sortingOrder"] = "none";
-        that.colList.push(col);
-      });
-    },
-
+    /**
+     * Called when clicking the arrows
+     * @param key: the order we sort by none(default)/asc/dsc
+     */
     sortColumn(key) {
       const col = this.colList.find(el => el.id === key);
-      if (col.sortingOrder) {
-        switch (col.sortingOrder) {
-          case "none":
-            col.sortingOrder = "asc";
-            break;
-          case "asc":
-            col.sortingOrder = "des";
-            break;
-          case "des":
-            col.sortingOrder = "asc";
-            break;
-          default:
-            break;
-        }
+      const oreder = col.sortingOrder;
+      if (oreder) {
+        col.sortingOrder = oreder === "none" || oreder === "des" ? "asc" : "des";
         this.sortList(key);
       }
     },
 
+    /**
+     * Called to sort filteredRows
+     * @param key: the order we sort by none(default)/asc/dsc
+     */
     sortList(key) {
       const col = this.colList.find(el => el.id === key);
       const order = col.sortingOrder === "asc" ? 1 : -1;
-      if (col.sortingOrder !== "none") {
-        this.filteredRows.sort((a, b) => {
-          const e1 = a[key];
-          const e2 = b[key];
-          if (e1 === e2) {
-            return 0;
-          }
-          return e1 > e2 ? 1 * order : -1 * order;
-        });
-      } else {
-        this.filteredRows = JSON.parse(JSON.stringify(this.rowList));
-      }
+      this.filteredRows.sort((a, b) => {
+        const e1 = a[key];
+        const e2 = b[key];
+        if (e1 === e2) {
+          return 0;
+        }
+        return e1 > e2 ? 1 * order : -1 * order;
+      });
     }
   }
 };
@@ -193,11 +213,6 @@ export default {
 
 <style scoped lang="scss">
   .fx-grid {
-    width: 100%;
-    border-spacing: 0;
-    border-top: 1px solid black;
-    border-left: 1px solid black;
-    border-bottom: 1px solid black;
 
     & .fx-grid-col__header {
       -webkit-touch-callout: none;
@@ -206,24 +221,9 @@ export default {
       -moz-user-select: none;
       -ms-user-select: none;
       user-select: none;
-      text-align: left;
-      border-bottom: 1px solid black;
-      border-right: 1px solid black;
-      padding-right: 10px;
-      padding-left: 10px;
-
-      & .fx-grid-col__header-title {
-        margin-bottom: 0;
-      }
-
-      & .fx-grid-col__header-filter {
-        margin-top: 0;
-      }
-
       &.fx-grid-col__header-count {
-        min-width: auto;
-        max-width: auto;
         text-align: center;
+        width: auto;
       }
 
       & .fx-grid-col__header-sort {
@@ -235,27 +235,22 @@ export default {
           }
         }
       }
+
+      & .fx-grid-col__header-filter {
+        margin-bottom: 0px !important;
+        width: 150px;
+      }
     }
 
     & .fx-grid-body {
-      & .fx-grid-cell,
-      & .fx-grid-cell__count {
-        height: 30px;
-        padding-left: 5px;
-        padding-right: 5px;
-        border-bottom: 1px solid black;
-        border-right: 1px solid black;
-      }
-
       & .fx-grid-cell__count {
         text-align: center;
       }
     }
 
     & .fx-grid-footer {
-        height: 50px;
-        border-right: 1px solid black;
-        padding-right: 50px;
+        padding-right: 3rem;
+        background-color: #e9ecef;
     }
   }
 </style>
