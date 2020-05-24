@@ -175,6 +175,8 @@ export default {
         // Reset index to avoid getting stuck on another page
         this.index = 1;
         this.updateNumberOfPages();
+        // Reset all the sort buttons
+        this.resetOtherHeaders();
       }  
     },
 
@@ -188,6 +190,7 @@ export default {
       if (oreder) {
         col.sortingOrder = oreder === "none" || oreder === "des" ? "asc" : "des";
         this.sortList(key);
+        this.resetOtherHeaders(col.id);
       }
     },
 
@@ -198,6 +201,7 @@ export default {
     sortList(key) {
       const col = this.colList.find(el => el.id === key);
       const order = col.sortingOrder === "asc" ? 1 : -1;
+
       this.filteredRows.sort((a, b) => {
         const e1 = a[key];
         const e2 = b[key];
@@ -206,7 +210,19 @@ export default {
         }
         return e1 > e2 ? 1 * order : -1 * order;
       });
-    }
+    },
+
+    /**
+     * Resets all the column we are not sorting by.
+     * @param id: the id of the column we need to keep
+     */
+    resetOtherHeaders(id) {
+      this.colList.forEach(col => {
+        if (col.id !== id) {
+          col.sortingOrder = "none";
+        }
+      });
+    },
   }
 };
 </script>
