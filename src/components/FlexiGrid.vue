@@ -22,12 +22,12 @@
     </thead>
     <tbody class="fx-grid-body">
       <tr scope="row" class="fx-grid-row" v-for="(row, i) in getPage">
-        <td scope="col" class="fx-grid-cell__count">{{((index - 1) * selectedPageSize) + i + 1}}</td>
+        <td scope="col" class="fx-grid-cell__count">{{infiniteScrolling ? i + 1 :((index - 1) * selectedPageSize) + i + 1}}</td>
         <td scope="col" class="fx-grid-cell" v-for="col in colList" :key="col.id">{{row[col.id] ? row[col.id] : "--"}}</td>
       </tr>
     </tbody>
-    <tfoot>
-      <tr scope="row" v-if="pagination && numberOfPages > 1">
+    <tfoot ref="infinitescrolltrigger">
+      <tr scope="row" v-if="!infiniteScrolling && pagination && numberOfPages > 1">
         <td scope="col" class="fx-grid-footer" align="right" :colspan="colList.length + 1">
           <button class="btn btn-outline-primary btn-sm fx-grid-footer__button-first-page" :disabled="index === 1" @click="changePage(0)">&lt;&lt;</button>
           <button class="btn btn-outline-primary btn-sm fx-grid-footer__button-previous-page" :disabled="index === 1" @click="changePage(-1)">&lt;</button>
@@ -50,6 +50,7 @@ export default {
     cols: { type: Array, required: true },
     rows: { type: Array, required: true },
     pagination: { type: Boolean, default: false },
+    infiniteScrolling: {type: Boolean, default: false},
     pageSize: { type: Number, default: 10 }
   },
 
@@ -65,13 +66,19 @@ export default {
 
   watch: {},
 
+  mounted() {
+    if (this.infiniteScrolling && this.pagination) {
+      this.scrollTrigger();
+    }
+  },
+
   computed: {
     /**
-     * Get the rows for the current page
+     * Get rows for the current page
      */
     getPage() {
       if (this.pagination) {
-        const start = (this.index - 1) * this.selectedPageSize;
+        const start = this.infiniteScrolling ? 1 : (this.index - 1) * this.selectedPageSize;
         const end =
           this.index * this.selectedPageSize > this.filteredRows.length
             ? this.filteredRows.length
@@ -147,9 +154,24 @@ export default {
       }
     },
 
+    /**
+     * Adds an intersaction observer on table footer,
+     * when triggered changes the page
+     */
+    scrollTrigger() {
+      const that = this;
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.intersectionRatio > 0) {
+            that.changePage(1);
+          }
+        });
+      });
+      observer.observe(this.$refs.infinitescrolltrigger);
+    },
 
     /**
-     * Called ok keyup in the filter inputs
+     * Called on keyup in the filter inputs
      * @param $event: if $event.which === 13(ENTER) we apply the filters
      * @param colId: the id of the column we want to filter by
      */

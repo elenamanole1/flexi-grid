@@ -11,15 +11,7 @@
         </p>
       </div>
     </div>
-    <div class="row">
-      <FlexiGrid
-        :cols="cols" 
-        :rows="rows" 
-        :pagination="pagination" 
-        :page-size="pageSize"
-      />
-    </div>
-
+    
     <div class="row">
       <div class="properties">
         <p>Properties</p>
@@ -27,6 +19,37 @@
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur quam felis, iaculis pulvinar risus id, ullamcorper sodales ante. Quisque pulvinar massa libero, nec auctor quam porta quis. Morbi dignissim velit non elit cursus, non porttitor nibh pretium. Quisque eu laoreet ante, in placerat nisi. Proin nibh orci, vulputate in quam eget, volutpat pulvinar orci.
         </p>
       </div>
+    </div>
+
+    <div class="row">
+      <div class="properties">
+        <p>Paginated table</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <FlexiGrid
+        :cols="table1.cols" 
+        :rows="table1.rows" 
+        :pagination="table1.pagination" 
+        :page-size="table1.pageSize"
+      />
+    </div>
+
+    <div class="row">
+      <div class="properties">
+        <p>Infinitscrolling table</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <FlexiGrid
+        :cols="table2.cols" 
+        :rows="table2.rows" 
+        :pagination="table2.pagination" 
+        :page-size="table2.pageSize"
+        :infinite-scrolling="table2.infiniteScrolling"
+      />
     </div>
   </div>
 </template>
@@ -40,44 +63,76 @@ export default {
     FlexiGrid
   },
   data: () => ({
-    cols: [
-      {
-        id: "first_name",
-        title: "First Name",
-        sort: true,
-        filter: true
-      },
-      {
-        id: "email",
-        title: "Email",
-        sort: false,
-        filter: true
-      },
-      {
-        id: "last_name",
-        title: "Last Name",
-        sort: true,
-        filter: true
-      },
-      
-      {
-        id: "adress",
-        title: "Adress",
-        sort: true,
-        filter: true
-      },
-      {
-        id: "phone_number",
-        title: "Phone Number",
-        filter: false
-      }
-    ],
-    rows: [],
-    pagination: true,
-    pageSize: 10
+    table1: {
+      cols: [
+        {
+          id: "first_name",
+          title: "First Name",
+          sort: true,
+          filter: true
+        },
+        {
+          id: "email",
+          title: "Email",
+          sort: false,
+          filter: true
+        },
+        {
+          id: "last_name",
+          title: "Last Name",
+          sort: true,
+          filter: true
+        },
+        
+        {
+          id: "adress",
+          title: "Adress",
+          sort: true,
+          filter: true
+        },
+        {
+          id: "phone_number",
+          title: "Phone Number",
+          filter: false
+        }
+      ],
+      rows: [],
+      pagination: true,
+      pageSize: 10,
+    },
+    table2: {
+      cols: [
+        {
+          id: "first_name",
+          title: "First Name",
+        },
+        {
+          id: "email",
+          title: "Email",
+        },
+        {
+          id: "last_name",
+          title: "Last Name",
+        },
+        
+        {
+          id: "adress",
+          title: "Adress",
+        },
+        {
+          id: "phone_number",
+          title: "Phone Number",
+        }
+      ],
+      rows: [],
+      pagination: true,
+      pageSize: 10,
+      infiniteScrolling: true
+    }
   }),
   created() {
-    this.rows = this.loadMockData();
+    this.table1.rows = JSON.parse(JSON.stringify(this.loadMockData()));
+    this.table2.rows = JSON.parse(JSON.stringify(this.loadMockData(101)));
   },
   methods: {
     loadMockData(nrOfRows) {
