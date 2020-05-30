@@ -22,7 +22,7 @@
     </thead>
     <tbody class="fx-grid-body">
       <tr scope="row" class="fx-grid-row" v-for="(row, i) in getPage">
-        <td scope="col" class="fx-grid-cell__count">{{infiniteScrolling ? i + 1 :((index - 1) * selectedPageSize) + i + 1}}</td>
+        <td scope="col" class="fx-grid-cell__count">{{infiniteScrolling ? i + 1 : ((index - 1) * selectedPageSize) + i + 1}}</td>
         <td scope="col" class="fx-grid-cell" v-for="col in colList" :key="col.id">{{row[col.id] ? row[col.id] : "--"}}</td>
       </tr>
     </tbody>
@@ -155,7 +155,7 @@ export default {
     },
 
     /**
-     * Adds an intersaction observer on table footer,
+     * Adds an intersection observer on table footer,
      * when triggered changes the page
      */
     scrollTrigger() {
