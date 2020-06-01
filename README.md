@@ -76,7 +76,7 @@ Keep in mind that providing values for a given column is option, that column wil
 If the pagination is enabled, only a number of entries are shown at a time in the grid, and a navigation panel is displayed, showing the current page and the total number of pages. 
 You can also jump to the last or to the firstpage.
 
-![Pagination](src\assets\images\pagination.png)
+![Pagination](src/assets/images/pagination.PNG)
 
 ### Filter and Sorting
 
@@ -84,20 +84,20 @@ The table cols also have some sorting and filter properties. If sorting is enabl
 
 In this example, First Name, Last Name and Adress can be ordered ascending or descending. First Name, E-mail, Last Name and Adress can be filtered. 
 
-![Headers with filer and sort properties](src\assets\images\sortfilter.png)
+![Headers with filer and sort properties](src/assets/images/sortfilter.PNG)
 
 The result of the filters is also paginated and multiple filters can be applied at once. For sorting, only one criteria can be chosen at a time. 
 
 The following gif illustratesa sorting and filtering example:
 
-![Filter and sort example](src\assets\images\filter-sort.gif)
+![Filter and sort example](src/assets/images/filter-sort.GIF)
 
 
 ### Infinite scrolling
 
 If infinite scrolling is enabled, the data can be viewed in a continuous single page mode. It is loaded in chunks (defined by `pageSize`), when scrolling to the end of the current chunk, new data will be loaded and displayed continuously.
 
-![Infinite Scrolling](src\assets\images\infinite-scroll.gif)
+![Infinite Scrolling](src/assets/images/infinite-scroll.GIF)
 
 ## Here you can see a full example for how to implement FlexiGrid
 ```html
