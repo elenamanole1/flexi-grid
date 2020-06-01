@@ -90,14 +90,14 @@ The result of the filters is also paginated and multiple filters can be applied 
 
 The following gif illustratesa sorting and filtering example:
 
-![Filter and sort example](src/assets/images/filter-sort.GIF)
+![Filter and sort example](src/assets/images/filter-sort.gif)
 
 
 ### Infinite scrolling
 
 If infinite scrolling is enabled, the data can be viewed in a continuous single page mode. It is loaded in chunks (defined by `pageSize`), when scrolling to the end of the current chunk, new data will be loaded and displayed continuously.
 
-![Infinite Scrolling](src/assets/images/infinite-scroll.GIF)
+![Infinite Scrolling](src/assets/images/infinite-scroll.gif)
 
 ## Here you can see a full example for how to implement FlexiGrid
 ```html
