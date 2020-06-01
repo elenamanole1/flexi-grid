@@ -3,23 +3,6 @@
     <div class="row">
       <h1 class="title">Flexible Grid</h1>
     </div>
-    <div class="row">
-      <div class="description">
-        <p>Description</p>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur quam felis, iaculis pulvinar risus id, ullamcorper sodales ante. Quisque pulvinar massa libero, nec auctor quam porta quis. Morbi dignissim velit non elit cursus, non porttitor nibh pretium. Quisque eu laoreet ante, in placerat nisi. Proin nibh orci, vulputate in quam eget, volutpat pulvinar orci.
-        </p>
-      </div>
-    </div>
-    
-    <div class="row">
-      <div class="properties">
-        <p>Properties</p>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur quam felis, iaculis pulvinar risus id, ullamcorper sodales ante. Quisque pulvinar massa libero, nec auctor quam porta quis. Morbi dignissim velit non elit cursus, non porttitor nibh pretium. Quisque eu laoreet ante, in placerat nisi. Proin nibh orci, vulputate in quam eget, volutpat pulvinar orci.
-        </p>
-      </div>
-    </div>
 
     <div class="row">
       <div class="properties">
@@ -38,7 +21,7 @@
 
     <div class="row">
       <div class="properties">
-        <p>Infinitscrolling table</p>
+        <p>Infinite scrolling table</p>
       </div>
     </div>
 
