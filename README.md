@@ -47,8 +47,8 @@ cols: [
   }
 ],
 ```
-* id: `any` - is mandatory and will determin the id of a given column
-* title: `any` - optiona, will determin the column header
+* id: `any` - is mandatory and will determine the id of a given column
+* title: `any` - optional, will determine the column header
 * sort: `Boolean` - default `false`, if set to `true` will allow sorting on that column
 * filter: `Boolean` - default `false`, if set to `true` will allow filtering on that column
 
@@ -67,7 +67,7 @@ rows: [
   }
 ]
 ```
-Keep in mind that providing values for a given column is option, that column will be populated with  `--` if nothing is specified.
+Keep in mind that providing values for a given column is optional, that column will be populated with  `--` if nothing is specified.
 
 ## Component functionalities
 
